@@ -166,6 +166,28 @@ body, html {
 }
 
 
+.generated-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.generated-table th,
+.generated-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.row-input {
+    margin-bottom: 10px;
+}
+
+form label {
+    margin-right: 10px;
+}
+
+
 @media (max-width: 768px) {
     .layout {
         flex-direction: column;
