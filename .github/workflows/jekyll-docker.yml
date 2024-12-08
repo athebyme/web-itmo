@@ -3,7 +3,7 @@ name: Jekyll site CI
 on:
   push:
     branches:
-      - main  # Запускать только при пуше в основную ветку
+      - main  # запускать только при пуше в основную ветку
 
 jobs:
   build:
@@ -16,7 +16,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.0' # Выберите версию Ruby, которую поддерживает Jekyll
+          ruby-version: '3.0' # версию Ruby, которая поддерживает Jekyll
 
       - name: Install dependencies
         run: |
@@ -31,4 +31,4 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./_site
-          publish_branch: lab-6 # Укажите ветку для публикации
+          publish_branch: gh-pages # укажите ветку для публикации
