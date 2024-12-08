@@ -5,24 +5,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const preloader = document.getElementById('preloader');
     const errorMessage = document.getElementById('error-message');
 
-    // Скрыть прелоадер и сообщения об ошибках изначально
+    // скрыть прелоадер и сообщения об ошибках изначально
     preloader.style.display = 'none';
     errorMessage.style.display = 'none';
 
-    // Функция для отправки запроса и отображения изображений
+    // функция для отправки запроса и отображения изображений
     const fetchProductImages = async (productIDs) => {
         try {
             // Показать preloader
             preloader.style.display = 'block';
-            productImagesList.innerHTML = ''; // Очистить список
+            productImagesList.innerHTML = ''; // очистить список
             errorMessage.style.display = 'none';
 
-            const response = await fetch('http://176.108.252.147:8081/api/media', {
+            const response = await fetch('https://176.108.252.147:8081/api/media', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ productIDs }), // Используем массив чисел
+                body: JSON.stringify({ productIDs }), // используем массив чисел
             });
 
             if (!response.ok) {
@@ -31,12 +31,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const data = await response.json();
 
-            // Проверяем, что data — это объект с ключами и массивами
+            //проверяем, что data объект с ключами и массивами
             if (typeof data !== 'object' || Object.keys(data).length === 0) {
                 throw new Error('Нет данных для отображения.');
             }
 
-            // Создание таблицы
+            //создание таблицы
             const table = document.createElement('table');
             table.classList.add('product-table');
             const thead = document.createElement('thead');
@@ -84,23 +84,23 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
 
-// Обработчик формы
+//обработчик формы
     productForm.addEventListener('submit', (event) => {
         event.preventDefault();
         const productIDsInputValue = productIDsInput.value.trim();
         if (productIDsInputValue === "") {
-            fetchProductImages(null); // Если пусто, получить все фотографии
+            fetchProductImages(null); //если пусто, получить все фотографии
             return;
         }
 
         const productIDs = productIDsInputValue
             .split(',')
-            .map(id => parseInt(id.trim(), 10)) // Преобразуем в числа
-            .filter(id => !isNaN(id)); // Убираем некорректные значения
+            .map(id => parseInt(id.trim(), 10)) //преобразуем в числа
+            .filter(id => !isNaN(id)); //убираем некорректные значения
 
         const allNumbers = productIDsInputValue.split(',')
             .map(id => id.trim())
-            .every(id => /^[0-9]+$/.test(id)); // Проверяем, что все ID - числа
+            .every(id => /^[0-9]+$/.test(id)); //проверяем, что все ID - числа
 
         if (!allNumbers) {
             errorMessage.textContent = 'Пожалуйста, введите корректные ID товаров (только числа).';
