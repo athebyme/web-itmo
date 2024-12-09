@@ -31,12 +31,11 @@ body, html {
     padding: 15px;
     border-radius: 8px;
     position: relative;
+    height: 220px;
 }
 .nav__logo-wrapper {
     bottom: 20px;
     right: 20px;
-    display: flex;
-    align-items: center;
 }
 .nav__logo-text {
     margin: 35px 10px 10px;
@@ -44,7 +43,6 @@ body, html {
 }
 .nav__logo{
     scale: 50%;
-
 }
 .nav__list {
     list-style: none;
