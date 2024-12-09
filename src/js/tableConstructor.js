@@ -6,6 +6,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let table;
 
+    function saveDataToLocalStorage(data) {
+        localStorage.setItem("tableData", JSON.stringify(data));
+    }
+
+    function loadDataFromLocalStorage() {
+        const data = localStorage.getItem("tableData");
+        return data ? JSON.parse(data) : [];
+    }
+
     function createRowInput(index) {
         const rowDiv = document.createElement("div");
         rowDiv.classList.add("row-input");
@@ -68,12 +77,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const tbody = table.querySelector("tbody");
-        data.forEach((rowData) => {
+        tbody.innerHTML = ""; // Clear the existing rows
+        data.forEach((rowData, index) => {
             const row = document.createElement("tr");
 
             // номер строки
             const numberCell = document.createElement("td");
-            numberCell.textContent = tbody.rows.length + 1; // Авто-нумерация
+            numberCell.textContent = index + 1; // Auto-numbering
             row.appendChild(numberCell);
 
             // артикул
@@ -96,7 +106,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const deleteButton = document.createElement("button");
             deleteButton.textContent = "Удалить";
             deleteButton.addEventListener("click", () => {
-                row.remove();
+                data.splice(index, 1);
+                saveDataToLocalStorage(data);
+                generateOrUpdateTable(data);
             });
             actionCell.appendChild(deleteButton);
             row.appendChild(actionCell);
@@ -116,9 +128,16 @@ document.addEventListener("DOMContentLoaded", () => {
             const noteType = form[`noteType_${i}`].value;
             const comment = form[`comment_${i}`].value;
 
-            rowData.push({ article, noteType, comment });
+            const existingRow = rowData.find(row => row.article === article);
+            if (existingRow) {
+                existingRow.noteType = noteType;
+                existingRow.comment = comment;
+            } else {
+                rowData.push({ article, noteType, comment });
+            }
         }
 
+        saveDataToLocalStorage(rowData);
         generateOrUpdateTable(rowData);
     });
 
@@ -129,5 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
         createRowInput(rowCount - 1);
     });
 
+    const savedData = loadDataFromLocalStorage();
+    generateOrUpdateTable(savedData);
     initializeRows();
 });
