@@ -22,11 +22,11 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.removeItem('username');
             localStorage.removeItem('isLoggedIn');
 
-            setTimeout(function() {
-                window.location.href = '../../page/authorization.html';
-            }, 1000);
-
             toastr.success("Вы успешно вышли из системы.");
+
+            setTimeout(function() {
+                window.location.replace('./index.html');
+            }, 2000);
         });
     } else {
         console.error("Элемент с id 'logoutLink' не найден");
