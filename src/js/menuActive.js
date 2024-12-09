@@ -1,25 +1,22 @@
-document.addEventListener("DOMContentLoaded", function() {
-    console.log("скрипт запущен");
+document.addEventListener('DOMContentLoaded', () => {
+    // Определяем текущий путь
+    const path = window.location.pathname;
 
-    const links = document.querySelectorAll(".nav__link");
-    console.log("количество найденных ссылок:", links.length);
+    // Логика для добавления класса active на текущую страницу
+    if (path.includes('index.html')) {
+        document.getElementById('home-link').classList.add('active');
+    } else if (path.includes('stats.html')) {
+        document.getElementById('stats-link').classList.add('active');
+    } else if (path.includes('constructor.html')) {
+        document.getElementById('constructor-link').classList.add('active');
+    } else if (path.includes('wildberries.html')) {
+        document.getElementById('wildberries-link').classList.add('active');
+    }
 
-    const currentPath = window.location.pathname === "/" ? "/index.html" : window.location.pathname;
-    console.log("текущий путь:", currentPath);
-
-    let activeLinkFound = false;
-
-    links.forEach(link => {
-        const linkPath = link.getAttribute("href").startsWith("#")
-            ? link.getAttribute("href")
-            : new URL(link.href, window.location.origin).pathname;
-
-        console.log("сравниваем:", linkPath, "с", currentPath);
-
-        if (!activeLinkFound && (linkPath === currentPath || linkPath === window.location.hash)) {
-            console.log("active для:", link.href);
-            link.classList.add("active");
-            activeLinkFound = true;
-        }
+    // Инициализация мобильного меню Bootstrap
+    var navbarToggler = document.querySelector('.navbar-toggler');
+    navbarToggler.addEventListener('click', function() {
+        var navbarNav = document.getElementById('navbarNav');
+        navbarNav.classList.toggle('show');
     });
 });
