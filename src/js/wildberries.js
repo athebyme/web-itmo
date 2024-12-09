@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
             productImagesList.innerHTML = ''; // очистить список
             errorMessage.style.display = 'none';
 
-            const response = await fetch('https://176.108.252.147:8081/api/media', {
+            const response = await fetch('http://176.108.252.147:8081/api/media', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
