@@ -31,21 +31,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const data = await response.json();
 
-            //проверяем, что data объект с ключами и массивами
+            // проверяем, что data объект с ключами и массивами
             if (typeof data !== 'object' || Object.keys(data).length === 0) {
                 throw new Error('Нет данных для отображения.');
             }
 
-            //создание таблицы
+            // создание таблицы
             const table = document.createElement('table');
             table.classList.add('product-table');
             const thead = document.createElement('thead');
             thead.innerHTML = `
-            <tr>
-                <th>ID товара</th>
-                <th>Изображения</th>
-            </tr>
-        `;
+                <tr>
+                    <th>ID товара</th>
+                    <th>Изображения</th>
+                </tr>
+            `;
             table.appendChild(thead);
 
             const tbody = document.createElement('tbody');
@@ -57,8 +57,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const imagesCell = document.createElement('td');
                 if (Array.isArray(images) && images.length > 0) {
                     images.forEach(imageUrl => {
+                        // Преобразование ссылки
+                        const updatedImageUrl = imageUrl.replace('http://sexoptovik.ru', 'https://api.athebyme-market.ru/sexoptovik');
+
                         const img = document.createElement('img');
-                        img.src = imageUrl;
+                        img.src = updatedImageUrl;
                         img.alt = `Товар ${id}`;
                         img.classList.add('product-image');
                         imagesCell.appendChild(img);
@@ -83,24 +86,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-
-//обработчик формы
+    // обработчик формы
     productForm.addEventListener('submit', (event) => {
         event.preventDefault();
         const productIDsInputValue = productIDsInput.value.trim();
         if (productIDsInputValue === "") {
-            fetchProductImages(null); //если пусто, получить все фотографии
+            fetchProductImages(null); // если пусто, получить все фотографии
             return;
         }
 
         const productIDs = productIDsInputValue
             .split(',')
-            .map(id => parseInt(id.trim(), 10)) //преобразуем в числа
-            .filter(id => !isNaN(id)); //убираем некорректные значения
+            .map(id => parseInt(id.trim(), 10)) // преобразуем в числа
+            .filter(id => !isNaN(id)); // убираем некорректные значения
 
         const allNumbers = productIDsInputValue.split(',')
             .map(id => id.trim())
-            .every(id => /^[0-9]+$/.test(id)); //проверяем, что все ID - числа
+            .every(id => /^[0-9]+$/.test(id)); // проверяем, что все ID - числа
 
         if (!allNumbers) {
             errorMessage.textContent = 'Пожалуйста, введите корректные ID товаров (только числа).';
