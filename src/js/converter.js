@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded', function() {
     const amountInput = document.getElementById('amountInput');
     const cryptoSelect = document.getElementById('cryptoSelect');
@@ -10,6 +11,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const errorMessage = document.getElementById('errorMessage');
     const historyTable = document.getElementById('historyTable').querySelector('tbody');
     const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+
+    const cryptoMap = {
+        'BTCUSDT': 'bitcoin',
+        'ETHUSDT': 'ethereum',
+        'BNBUSDT': 'binancecoin',
+        'XRPUSDT': 'ripple',
+        'ADAUSDT': 'cardano',
+        'DOGEUSDT': 'dogecoin',
+        'SOLUSDT': 'solana'
+    };
 
     loadHistory();
 
@@ -38,7 +49,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
         toastr.info('Получение данных о курсе...');
 
-        const url = `https://api.binance.com/fapi/v1/ticker/price?symbol=${symbol}`;
+        const coinId = cryptoMap[symbol];
+        if (!coinId) {
+            showError('Неподдерживаемая криптовалюта');
+            return;
+        }
+
+        const url = `https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=usd`;
 
         fetch(url)
             .then(response => {
@@ -48,7 +65,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json();
             })
             .then(data => {
-                const price = parseFloat(data.price);
+                if (!data || !data[coinId] || !data[coinId].usd) {
+                    throw new Error('Некорректный ответ от API');
+                }
+
+                const price = parseFloat(data[coinId].usd);
                 const totalUsd = (amount * price).toFixed(2);
                 const shortSymbol = symbol.replace('USDT', '');
 
@@ -56,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 cryptoSymbol.textContent = shortSymbol;
                 usdAmount.textContent = totalUsd;
 
-                const date = new Date(data.time || Date.now());
+                const date = new Date();
                 updateTime.textContent = date.toLocaleString();
 
                 resultContainer.classList.remove('d-none');
