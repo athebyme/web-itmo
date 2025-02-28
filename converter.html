@@ -42,7 +42,7 @@
     <main class="main">
         <section class="section">
             <h2 class="section__title">Конвертер валют</h2>
-            <p class="section__text">Используйте этот инструмент для проверки стоимости криптовалют в долларах США.</p>
+            <p class="section__text">Используйте этот инструмент для проверки стоимости криптовалют в разных валютах.</p>
 
             <div class="converter-widget mt-4">
                 <div class="card">
@@ -66,6 +66,17 @@
                                 <option value="SOLUSDT">Solana (SOL)</option>
                             </select>
                         </div>
+                        <div class="mb-3">
+                            <label for="currencySelect" class="form-label">Выберите валюту конвертации</label>
+                            <select class="form-select" id="currencySelect">
+                                <option value="usd" selected>Доллар США (USD)</option>
+                                <option value="eur">Евро (EUR)</option>
+                                <option value="rub">Российский рубль (RUB)</option>
+                                <option value="gbp">Британский фунт (GBP)</option>
+                                <option value="jpy">Японская йена (JPY)</option>
+                                <option value="cny">Китайский юань (CNY)</option>
+                            </select>
+                        </div>
                         <button class="btn btn-primary w-100" id="convertBtn">Конвертировать</button>
 
                         <div class="result-container mt-4 text-center d-none" id="resultContainer">
@@ -73,7 +84,8 @@
                             <div class="alert alert-info">
                                 <span id="cryptoAmount" class="fw-bold"></span>
                                 <span id="cryptoSymbol" class="fw-bold"></span> =
-                                <span id="usdAmount" class="fw-bold"></span> USD
+                                <span id="convertedAmount" class="fw-bold"></span>
+                                <span id="currencySymbol" class="fw-bold"></span>
                             </div>
                             <p class="small text-muted">Цена обновлена: <span id="updateTime"></span></p>
                         </div>
@@ -94,7 +106,7 @@
                             <th>Дата/Время</th>
                             <th>Криптовалюта</th>
                             <th>Количество</th>
-                            <th>Стоимость (USD)</th>
+                            <th>Стоимость</th>
                             <th>Курс</th>
                         </tr>
                         </thead>

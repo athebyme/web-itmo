@@ -1,12 +1,13 @@
-
 document.addEventListener('DOMContentLoaded', function() {
     const amountInput = document.getElementById('amountInput');
     const cryptoSelect = document.getElementById('cryptoSelect');
+    const currencySelect = document.getElementById('currencySelect');
     const convertBtn = document.getElementById('convertBtn');
     const resultContainer = document.getElementById('resultContainer');
     const cryptoAmount = document.getElementById('cryptoAmount');
     const cryptoSymbol = document.getElementById('cryptoSymbol');
-    const usdAmount = document.getElementById('usdAmount');
+    const convertedAmount = document.getElementById('convertedAmount');
+    const currencySymbol = document.getElementById('currencySymbol');
     const updateTime = document.getElementById('updateTime');
     const errorMessage = document.getElementById('errorMessage');
     const historyTable = document.getElementById('historyTable').querySelector('tbody');
@@ -16,10 +17,13 @@ document.addEventListener('DOMContentLoaded', function() {
         'BTCUSDT': 'bitcoin',
         'ETHUSDT': 'ethereum',
         'BNBUSDT': 'binancecoin',
-        'XRPUSDT': 'ripple',
-        'ADAUSDT': 'cardano',
-        'DOGEUSDT': 'dogecoin',
         'SOLUSDT': 'solana'
+    };
+
+    const currencySymbols = {
+        'usd': '$',
+        'eur': '€',
+        'rub': '₽',
     };
 
     loadHistory();
@@ -28,13 +32,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const amount = parseFloat(amountInput.value);
         const symbol = cryptoSelect.value;
         const cryptoName = cryptoSelect.options[cryptoSelect.selectedIndex].text;
+        const currency = currencySelect.value;
 
         if (isNaN(amount) || amount <= 0) {
             showError('Пожалуйста, введите корректное число');
             return;
         }
 
-        fetchCryptoPrice(symbol, amount, cryptoName);
+        fetchCryptoPrice(symbol, amount, cryptoName, currency);
     });
 
     clearHistoryBtn.addEventListener('click', function() {
@@ -43,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
         toastr.success('История конвертаций очищена');
     });
 
-    function fetchCryptoPrice(symbol, amount, cryptoName) {
+    function fetchCryptoPrice(symbol, amount, cryptoName, currency) {
         resultContainer.classList.add('d-none');
         errorMessage.classList.add('d-none');
 
@@ -55,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        const url = `https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=usd`;
+        const url = `https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=${currency}`;
 
         fetch(url)
             .then(response => {
@@ -65,17 +70,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json();
             })
             .then(data => {
-                if (!data || !data[coinId] || !data[coinId].usd) {
+                if (!data || !data[coinId] || !data[coinId][currency]) {
                     throw new Error('Некорректный ответ от API');
                 }
 
-                const price = parseFloat(data[coinId].usd);
-                const totalUsd = (amount * price).toFixed(2);
+                const price = parseFloat(data[coinId][currency]);
+                const totalConverted = (amount * price).toFixed(2);
                 const shortSymbol = symbol.replace('USDT', '');
 
                 cryptoAmount.textContent = amount;
                 cryptoSymbol.textContent = shortSymbol;
-                usdAmount.textContent = totalUsd;
+                convertedAmount.textContent = totalConverted;
+                currencySymbol.textContent = currency.toUpperCase();
 
                 const date = new Date();
                 updateTime.textContent = date.toLocaleString();
@@ -87,7 +93,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     crypto: shortSymbol,
                     cryptoName: cryptoName.split(' ')[0],
                     amount: amount,
-                    usdValue: totalUsd,
+                    convertedValue: totalConverted,
+                    currency: currency.toUpperCase(),
+                    currencySymbol: currencySymbols[currency] || '',
                     rate: price
                 });
 
@@ -111,8 +119,8 @@ document.addEventListener('DOMContentLoaded', function() {
             <td>${entry.date}</td>
             <td>${entry.cryptoName}</td>
             <td>${entry.amount}</td>
-            <td>$${entry.usdValue}</td>
-            <td>$${parseFloat(entry.rate).toFixed(2)}</td>
+            <td>${entry.currencySymbol}${entry.convertedValue} ${entry.currency}</td>
+            <td>${entry.currencySymbol}${parseFloat(entry.rate).toFixed(2)}</td>
         `;
 
         historyTable.insertBefore(row, historyTable.firstChild);
@@ -136,12 +144,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
         history.forEach(entry => {
             const row = document.createElement('tr');
+            const currencySymbol = entry.currencySymbol || '';
+            const currency = entry.currency || 'USD';
+
             row.innerHTML = `
                 <td>${entry.date}</td>
                 <td>${entry.cryptoName}</td>
                 <td>${entry.amount}</td>
-                <td>$${entry.usdValue}</td>
-                <td>$${parseFloat(entry.rate).toFixed(2)}</td>
+                <td>${currencySymbol}${entry.convertedValue} ${currency}</td>
+                <td>${currencySymbol}${parseFloat(entry.rate).toFixed(2)}</td>
             `;
             historyTable.appendChild(row);
         });
