@@ -16,35 +16,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function createRowInput(index) {
-        const rowDiv = document.createElement("div");
-        rowDiv.classList.add("row-input");
-
-        const articleInput = document.createElement("input");
-        articleInput.type = "text";
-        articleInput.name = `article_${index}`;
-        articleInput.placeholder = `Введите артикул (${index + 1})`;
-        articleInput.required = true;
-
-        const noteTypeSelect = document.createElement("select");
-        noteTypeSelect.name = `noteType_${index}`;
-        ["Ошибка", "Редактирование", "Улучшение"].forEach((type) => {
-            const option = document.createElement("option");
-            option.value = type;
-            option.textContent = type;
-            noteTypeSelect.appendChild(option);
-        });
-
-        const commentInput = document.createElement("textarea");
-        commentInput.name = `comment_${index}`;
-        commentInput.placeholder = "Введите комментарий";
-        commentInput.rows = 2;
-        commentInput.required = true;
-
-        rowDiv.appendChild(articleInput);
-        rowDiv.appendChild(noteTypeSelect);
-        rowDiv.appendChild(commentInput);
-
-        rowsContainer.appendChild(rowDiv);
+        const rowHTML = `
+        <div class="row-input">
+            <input type="text" name="article_${index}" placeholder="Введите артикул (${index + 1})" required>
+            <select name="noteType_${index}">
+                <option value="Ошибка">Ошибка</option>
+                <option value="Редактирование">Редактирование</option>
+                <option value="Улучшение">Улучшение</option>
+            </select>
+            <textarea name="comment_${index}" placeholder="Введите комментарий" rows="2" required></textarea>
+        </div>
+    `;
+        rowsContainer.insertAdjacentHTML('beforeend', rowHTML);
     }
 
     function initializeRows() {
